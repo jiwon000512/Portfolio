@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.UIElements;
@@ -11,7 +12,7 @@ public partial class Tool : EditorWindow
     [MenuItem("메뉴/툴")]
     public static void OpenEditorWindow()
     {
-        if(EditorSceneManager.GetActiveScene().name != "DummyPlayScene")
+        if (EditorSceneManager.GetActiveScene().name != "DummyPlayScene")
         {
             EditorSceneManager.OpenScene("Assets/Scenes/DummyPlayScene.unity", OpenSceneMode.Single);
         }
@@ -47,14 +48,35 @@ public partial class Tool : EditorWindow
         window.titleContent = new GUIContent("툴");
     }
 
+    const string SaveFolderPath = "Assets/EditorData/";
+
     public void Load(string fileName)
     {
+        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName);
 
+        if (data == null)
+        {
+            return;
+        }
+
+        nodeView.LoadNodes(data.nodes);
     }
 
     public void Save(string fileName)
     {
+        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName);
+        if (data == null)
+        {
+            data = ScriptableObject.CreateInstance<ToolSaveData>();
+            data.nodes = nodeView.GetNodes().Select(x => x.data).ToList();
+            AssetDatabase.CreateAsset(data, SaveFolderPath);
+        }
+        else
+        {
+            data.nodes = nodeView.GetNodes().Select(x => x.data).ToList();
+        }
 
+        AssetDatabase.SaveAssets();
     }
 
     public void Delete()
