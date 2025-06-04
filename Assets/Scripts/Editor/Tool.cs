@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.SceneManagement;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+
+using static ToolSaveData;
 
 public partial class Tool : EditorWindow
 {
@@ -54,12 +57,66 @@ public partial class Tool : EditorWindow
     {
         var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName);
 
-        if (data == null)
+        if (data == null || data.nodes.Count == 0)
         {
+            nodeView.CreateStartNode(null);
             return;
         }
 
-        nodeView.LoadNodes(data.nodes);
+        List<ToolData> toolDatas = new List<ToolData>();
+        foreach(var v in data.nodes)
+        {
+            ToolData toolData = new ToolData(v.id);
+            toolData.AddData(v);
+
+            toolDatas.Add(toolData);
+        }
+
+        foreach(var preNode in toolDatas)
+        {
+            if(preNode.id == 0)
+            {
+                nodeView.CreateStartNode(preNode);
+            }
+            else
+            {
+                var node = nodeView.LoadNode(preNode);
+                nodeView.AddElement(node);
+
+                var nodePorts = data.nodeLinks.Where(x=> x.baseId == preNode.id).ToList();
+                nodePorts.ForEach(x => node.CreateOutput());
+            }
+        }
+
+        var nodes = nodeView.toolNodes;
+
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            var k = i; //Prevent access to modified closure
+            var connections = data.nodeLinks.Where(x => x.baseId == nodes[k].data.id).ToList();
+            for (var j = 0; j < connections.Count(); j++)
+            {
+                var id = connections[j].targetId;
+
+                var targetNode = nodes.Find(x => x.data.id == id);
+
+                if (targetNode == null || targetNode.data?.id == 0)
+                {
+                    Debug.LogError("연결되는 노드 없음");
+                    continue;
+                }
+
+                if (nodes[i].outputContainer.childCount <= j)
+                    continue;
+
+                LinkNodesTogether(nodes[i].outputContainer[j].Q<Port>(), (Port)targetNode.inputContainer[0], nodeView);
+
+
+                targetNode.SetPosition(new Rect(
+                    data.nodes.First(x => x.id == id).viewPosition,
+                    NodeView.defaultNodeSize));
+            }
+        }
     }
 
     public void Save(string fileName)
@@ -68,19 +125,80 @@ public partial class Tool : EditorWindow
         if (data == null)
         {
             data = ScriptableObject.CreateInstance<ToolSaveData>();
-            data.nodes = nodeView.GetNodes().Select(x => x.data).ToList();
             AssetDatabase.CreateAsset(data, SaveFolderPath);
         }
         else
         {
-            data.nodes = nodeView.GetNodes().Select(x => x.data).ToList();
+            EditorUtility.SetDirty(data);
+        }
+
+        data.nodes.Clear();
+        Dictionary<int, NodeInfo> dic = new Dictionary<int, NodeInfo>();
+
+        List<ToolNodeBase> nodes = nodeView.nodes.ToList().Cast<ToolNodeBase>().ToList();
+
+        foreach (var node in nodes)
+        {
+            if (node.data.toolInfo == null)
+            {
+                node.data.toolInfo = new ToolInfo();
+            }
+
+
+            NodeInfo info = new NodeInfo()
+            {
+                toolInfoType = node.data.toolInfo.toolType.ToString(),
+                viewPosition = node.GetPosition().position,
+                settingName = node.GetGroupName(),
+                id = node.data.id,
+            };
+
+            //info.toolInfo = Newtonsoft.Json.JsonConvert.SerializeObject(node.data.id);
+            data.nodes.Add(info);
+            dic.Add(info.id, info);
+        }
+
+        List<Edge> edges = nodeView.edges.ToList();
+
+        if (!edges.Any()) return;
+
+        data.nodeLinks.Clear();
+
+        var connectedSockets = edges.Where(x => x.input.node != null).ToArray();
+        for (var i = 0; i < connectedSockets.Count(); i++)
+        {
+            var outputNode = (connectedSockets[i].output.node as ToolNodeBase);
+            var inputNode = (connectedSockets[i].input.node as ToolNodeBase);
+            data.nodeLinks.Add(new LinkData
+            {
+                portName = connectedSockets[i].output.portName,
+                targetId = inputNode.data.id,
+                baseId = outputNode.data.id,
+            });
+
+            dic[outputNode.data.id].outNodes.Add(inputNode.data.id);
+            dic[inputNode.data.id].inNodes.Add(outputNode.data.id);
         }
 
         AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+        AssetDatabase.Refresh();
     }
 
     public void Delete()
     {
 
+    }
+
+    public static void LinkNodesTogether(Port outputSocket, Port inputSocket, NodeView view)
+    {
+        var tempEdge = new Edge()
+        {
+            output = outputSocket,
+            input = inputSocket
+        };
+        tempEdge?.input.Connect(tempEdge);
+        tempEdge?.output.Connect(tempEdge);
+        view.Add(tempEdge);
     }
 }
