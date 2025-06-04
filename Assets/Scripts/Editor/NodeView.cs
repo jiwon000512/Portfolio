@@ -101,10 +101,10 @@ public class NodeView : GraphView
         return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(float));
     }
 
-    public ToolNode LoadNode(ToolData data)
+    public ToolNode LoadNode(ToolData data,ToolSaveData.NodeInfo nodeInfo)
     {
         var node = CreateNode("test");
-        node.Load(data);
+        node.Load(data, nodeInfo);
         return node;
     }
 
@@ -125,7 +125,14 @@ public class NodeView : GraphView
 
         var pos = viewTransform.matrix.inverse.MultiplyPoint(a.eventInfo.mousePosition);
 
-        node.Create(pos);
+        int max = 0;
+        toolNodes.ForEach(x =>
+        {
+            if (x.data != null && x.id > max)
+                max = x.id;
+        });
+
+        node.Create(pos, max + 1);
 
     }
 }

@@ -80,13 +80,17 @@ public class ToolNode : ToolNodeBase
         RefreshPorts();
     }
 
-    public void Load(ToolData data)
+    public void Load(ToolData data, ToolSaveData.NodeInfo nodeInfo)
     {
         this.data = data;
+        Init(nodeInfo.viewPosition);
+        if (nodeInfo.settingName != null)
+            SetGroupName(nodeInfo.settingName);
     }
 
-    public void Create(Vector2 pos)
+    public void Create(Vector2 pos, int id)
     {
+        data = new ToolData(id);
         CreateOutput();
         Init(pos);
     }

@@ -55,7 +55,7 @@ public partial class Tool : EditorWindow
 
     public void Load(string fileName)
     {
-        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName);
+        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName + ".asset");
 
         if (data == null || data.nodes.Count == 0)
         {
@@ -72,18 +72,19 @@ public partial class Tool : EditorWindow
             toolDatas.Add(toolData);
         }
 
-        foreach(var preNode in toolDatas)
+        foreach(var toolData in toolDatas)
         {
-            if(preNode.id == 0)
+            if(toolData.id == 0)
             {
-                nodeView.CreateStartNode(preNode);
+                nodeView.CreateStartNode(toolData);
             }
             else
             {
-                var node = nodeView.LoadNode(preNode);
+                var nodeInfo = data.nodes.Find(x => x.id == toolData.id);
+                var node = nodeView.LoadNode(toolData, nodeInfo);
                 nodeView.AddElement(node);
 
-                var nodePorts = data.nodeLinks.Where(x=> x.baseId == preNode.id).ToList();
+                var nodePorts = data.nodeLinks.Where(x=> x.baseId == toolData.id).ToList();
                 nodePorts.ForEach(x => node.CreateOutput());
             }
         }
@@ -121,11 +122,11 @@ public partial class Tool : EditorWindow
 
     public void Save(string fileName)
     {
-        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName);
+        var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName + ".asset");
         if (data == null)
         {
             data = ScriptableObject.CreateInstance<ToolSaveData>();
-            AssetDatabase.CreateAsset(data, SaveFolderPath);
+            AssetDatabase.CreateAsset(data, SaveFolderPath + fileName + ".asset");
         }
         else
         {
