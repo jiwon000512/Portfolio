@@ -27,6 +27,44 @@ public class NodeView : GraphView
         grid.StretchToParentSize();
     }
 
+    public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+    {
+        if (evt.target is GraphView)
+        {
+            evt.menu.AppendAction("노드 생성", CreateNode, DropdownMenuAction.AlwaysEnabled);
+            evt.menu.AppendSeparator();
+        }
+
+        if (evt.target is GraphView || evt.target is Node || evt.target is Group)
+        {
+            evt.menu.AppendSeparator();
+            evt.menu.AppendAction("복사", delegate
+            {
+                DuplicateSelectionCallback();
+            }, (DropdownMenuAction a) => canDuplicateSelection ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
+            evt.menu.AppendSeparator();
+        }
+
+
+        if (evt.target is GraphView || evt.target is Node || evt.target is Group || evt.target is Edge)
+        {
+            evt.menu.AppendSeparator();
+            evt.menu.AppendAction("삭제", delegate
+            {
+                if (evt.target is Node)
+                {
+
+                }
+                else
+                {
+                    DeleteSelectionCallback(AskUser.DontAskUser);
+                }
+            }, (DropdownMenuAction a) => canDeleteSelection ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
+
+
+        }
+    }
+
     public void CreateStartNode(ToolData data)
     {
 
@@ -48,5 +86,15 @@ public class NodeView : GraphView
 
         AddElement(node);
         return node;
+    }
+
+    private void CreateNode(DropdownMenuAction a)
+    { 
+        var node = CreateNode("노드");
+
+        var pos = viewTransform.matrix.inverse.MultiplyPoint(a.eventInfo.mousePosition);
+
+        node.Create(pos);
+
     }
 }
