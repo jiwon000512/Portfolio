@@ -67,7 +67,38 @@ public class NodeView : GraphView
 
     public void CreateStartNode(ToolData data)
     {
+        var node = new ToolNode()
+        {
+            title = "Start",
+        };
 
+        var generatedPort = GetPortInstance(node, Direction.Output);
+        generatedPort.portName = "Next";
+        node.outputContainer.Add(generatedPort);
+
+        node.capabilities &= ~Capabilities.Movable;
+        node.capabilities &= ~Capabilities.Deletable;
+
+        node.RefreshExpandedState();
+        node.RefreshPorts();
+        node.SetPosition(new Rect(100, 100, 100, 150));
+        AddElement(node);
+
+        if (data == null)
+        {
+            node.data = new ToolData(0);
+            node.data.toolInfo = new ToolSaveData.ToolInfo();
+        }
+        else
+        {
+            node.data = data;
+        }
+    }
+
+    private Port GetPortInstance(ToolNodeBase node, Direction nodeDirection,
+        Port.Capacity capacity = Port.Capacity.Single)
+    {
+        return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(float));
     }
 
     public ToolNode LoadNode(ToolData data)
