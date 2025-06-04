@@ -92,7 +92,7 @@ public partial class Tool : EditorWindow
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            var k = i; //Prevent access to modified closure
+            var k = i;
             var connections = data.nodeLinks.Where(x => x.baseId == nodes[k].data.id).ToList();
             for (var j = 0; j < connections.Count(); j++)
             {

@@ -41,6 +41,12 @@ public class NodeView : GraphView
 
     public ToolNode CreateNode(string nodeName)
     {
-        return null;
+        var node = new ToolNode()
+        {
+            title = nodeName,
+        };
+
+        AddElement(node);
+        return node;
     }
 }
