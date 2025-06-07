@@ -25,6 +25,6 @@ public class ToolTypeSetting : ScriptableObject
 
     public static ToolTypeSetting GetData()
     {
-        return AssetDatabase.LoadAssetAtPath("Assets/EditorData/ToolTypeSetting.asset", typeof(ToolTypeSettingInfo)) as ToolTypeSetting;
+        return AssetDatabase.LoadAssetAtPath("Assets/EditorData/ToolTypeSetting.asset", typeof(ToolTypeSetting)) as ToolTypeSetting;
     }
 }

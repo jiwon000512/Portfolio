@@ -1,22 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ToolNodeBase : Node
+public class ToolNode : Node
 {
     public ToolData data;
     public int id => data.id;
 
-    public virtual Dictionary<string, string> GetGroupName()
-    {
-        return new Dictionary<string, string>();
-    }
-}
-
-public class ToolNode : ToolNodeBase
-{
     public enum DropDownType
     {
         Main = 0,
@@ -30,7 +23,7 @@ public class ToolNode : ToolNodeBase
     Dictionary<DropDownType, ToolNodeElement> dropdownDatas = new Dictionary<DropDownType, ToolNodeElement>();
     ToolTypeSetting settingInfo;
 
-    public override Dictionary<string, string> GetGroupName()
+    public Dictionary<string, string> GetGroupName()
     {
         Dictionary<string, string> list = new Dictionary<string, string>();
         foreach (var v in mainContainer.Children())
@@ -49,33 +42,36 @@ public class ToolNode : ToolNodeBase
     {
         foreach (var v in datas)
         {
-            //var data = DropdownDatas.(k => k.Value.Title == v.Key);
+            var data = dropdownDatas.Values.ToList().Find(x => x.title == v.Key);
 
-            //if (data.Value != null)
-            //{
-            //    data.Value.SelectDropDown(v.Value);
-            //}
+            if (data != null)
+            {
+                data.SelectDropDown(v.Value);
+            }
         }
+    }
+
+    public Port CreatePort(Direction direction, string portName, Port.Capacity capacity = Port.Capacity.Multi)
+    {
+        var port = InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(float));
+        port.portName = portName;
+
+        return port;
     }
 
     void CreateInput()
     {
-        var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
-        inputPort.portName = "Input";
+        var inputPort = CreatePort(Direction.Input, "Input");
         inputContainer.Add(inputPort);
 
-        var createOutputButton = new Button(() => { CreateOutput(); })
-        {
-            text = "포트추가"
-        };
+        var createOutputButton = new Button(() => { CreateOutput(); }) { text = "포트추가" };
         titleButtonContainer.Add(createOutputButton);
     }
 
     public void CreateOutput()
     {
-        var generatedPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-        generatedPort.portName = "Next";
-        outputContainer.Add(generatedPort);
+        var outputPort = CreatePort(Direction.Output, "Output");
+        outputContainer.Add(outputPort);
         RefreshExpandedState();
         RefreshPorts();
     }
@@ -91,21 +87,21 @@ public class ToolNode : ToolNodeBase
     public void Create(Vector2 pos, int id)
     {
         data = new ToolData(id);
-        CreateOutput();
         Init(pos);
+        CreateOutput();
     }
 
     public void Init(Vector2 pos)
     {
         SetPosition(new Rect(pos, NodeView.defaultNodeSize));
         this.title = data.id.ToString();
-
         settingInfo = ToolTypeSetting.GetData();
 
         for (DropDownType i = DropDownType.Main; i < DropDownType.Max; i++)
             dropdownDatas.Add(i, new ToolNodeElement(this));
 
         CreateInput();
+
         CreateMainDropDown();
 
         RefreshExpandedState();
@@ -114,7 +110,7 @@ public class ToolNode : ToolNodeBase
 
     void CreateMainDropDown()
     {
-        //DropdownDatas[DropDownType.Main].Apply(DropDownType.Main, SettingInfo.Main.Title, SettingInfo.Main, Dropdown);
+        dropdownDatas[DropDownType.Main].Apply(DropDownType.Main, settingInfo.main.title, settingInfo.main, Dropdown);
         mainContainer.Add(dropdownDatas[DropDownType.Main]);
     }
 

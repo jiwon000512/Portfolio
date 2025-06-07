@@ -136,7 +136,7 @@ public partial class Tool : EditorWindow
         data.nodes.Clear();
         Dictionary<int, NodeInfo> dic = new Dictionary<int, NodeInfo>();
 
-        List<ToolNodeBase> nodes = nodeView.nodes.ToList().Cast<ToolNodeBase>().ToList();
+        List<ToolNode> nodes = nodeView.nodes.ToList().Cast<ToolNode>().ToList();
 
         foreach (var node in nodes)
         {
@@ -168,8 +168,8 @@ public partial class Tool : EditorWindow
         var connectedSockets = edges.Where(x => x.input.node != null).ToArray();
         for (var i = 0; i < connectedSockets.Count(); i++)
         {
-            var outputNode = (connectedSockets[i].output.node as ToolNodeBase);
-            var inputNode = (connectedSockets[i].input.node as ToolNodeBase);
+            var outputNode = (connectedSockets[i].output.node as ToolNode);
+            var inputNode = (connectedSockets[i].input.node as ToolNode);
             data.nodeLinks.Add(new LinkData
             {
                 portName = connectedSockets[i].output.portName,

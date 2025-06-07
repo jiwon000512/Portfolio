@@ -16,13 +16,16 @@ MonoBehaviour:
   - id: 0
     toolInfo: 
     toolInfoType: ToolSaveData+ToolInfo
-    outNodes: 
+    outNodes: 01000000
     inNodes: 
     viewPosition: {x: 100, y: 100}
-  - id: 0
+  - id: 1
     toolInfo: 
     toolInfoType: ToolSaveData+ToolInfo
     outNodes: 
-    inNodes: 
-    viewPosition: {x: 100, y: 100}
-  nodeLinks: []
+    inNodes: 00000000
+    viewPosition: {x: 311.33334, y: 100}
+  nodeLinks:
+  - portName: Next
+    targetId: 1
+    baseId: 0

@@ -50,6 +50,15 @@ public class ToolNodeElement : VisualElement
     {
         switch(str)
         {
+            case "분류":
+                {
+                    CreateDropdown();
+                }
+                break;
+        }
+
+        switch(str)
+        {
             case "생성":
                 {
                     CreateDropdown();
@@ -75,5 +84,10 @@ public class ToolNodeElement : VisualElement
         {
             dropdown.choices.Add(v);
         }
+    }
+
+    public void SelectDropDown(string value)
+    {
+
     }
 }

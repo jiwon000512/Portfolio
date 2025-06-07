@@ -20,12 +20,14 @@ public class NodeView : GraphView
         this.AddManipulator(new ContentDragger());
         this.AddManipulator(new SelectionDragger());
         this.AddManipulator(new RectangleSelector());
+        this.AddManipulator(new ContentZoomer());
         this.AddManipulator(new FreehandSelector());
 
         var grid = new GridBackground();
         Insert(0, grid);
         grid.StretchToParentSize();
     }
+
 
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
     {
@@ -60,9 +62,31 @@ public class NodeView : GraphView
                     DeleteSelectionCallback(AskUser.DontAskUser);
                 }
             }, (DropdownMenuAction a) => canDeleteSelection ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
-
-
         }
+    }
+
+    public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+    {
+        List<Port> compatiblePorts = new List<Port>();
+
+        foreach (Port port in ports.ToList())
+        {
+            // 자기 자신은 제외
+            if (startPort == port)
+                continue;
+
+            // 방향이 반대여야 연결 가능
+            if (startPort.direction == port.direction)
+                continue;
+
+            // 타입이 동일해야 연결 가능
+            if (startPort.portType != port.portType)
+                continue;
+
+            compatiblePorts.Add(port);
+        }
+
+        return compatiblePorts;
     }
 
     public void CreateStartNode(ToolData data)
@@ -95,10 +119,10 @@ public class NodeView : GraphView
         }
     }
 
-    private Port GetPortInstance(ToolNodeBase node, Direction nodeDirection,
-        Port.Capacity capacity = Port.Capacity.Single)
+    private Port GetPortInstance(ToolNode node, Direction nodeDirection,
+        Port.Capacity capacity = Port.Capacity.Multi)
     {
-        return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(float));
+        return node.CreatePort(Direction.Output, "start");
     }
 
     public ToolNode LoadNode(ToolData data,ToolSaveData.NodeInfo nodeInfo)
@@ -114,7 +138,6 @@ public class NodeView : GraphView
         {
             title = nodeName,
         };
-
         AddElement(node);
         return node;
     }
@@ -133,6 +156,5 @@ public class NodeView : GraphView
         });
 
         node.Create(pos, max + 1);
-
     }
 }
