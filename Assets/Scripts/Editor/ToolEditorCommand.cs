@@ -68,5 +68,10 @@ public class ToolEditorCommand_CreateUnit : ToolEditorCommand<CreateUnit>
 
 public class ToolEditorCommand_CreateObjecct : ToolEditorCommand<CreateObject>
 {
+    public override void Execute(ToolNodeElement element, ToolNode node)
+    {
+        base.Execute(element, node);
 
+        CreateTextField(element, "파일경로", tool.path, (v) => { tool.path = v; });
+    }
 }

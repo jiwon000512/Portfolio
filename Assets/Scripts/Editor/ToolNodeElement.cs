@@ -11,6 +11,7 @@ public class ToolNodeElement : VisualElement
     public string title = "";
     public string currentSelect = "";
 
+    DropdownField currentDropdown;
     Action<string, DropDownType> dropdownCallBack;
     DropDownType dropdownType;
 
@@ -27,7 +28,7 @@ public class ToolNodeElement : VisualElement
 
         currentSelect = "";
 
-        if(command != null)
+        if (command != null)
         {
             command.Exit(parent);
             command = null;
@@ -48,7 +49,7 @@ public class ToolNodeElement : VisualElement
 
     void Play(string str)
     {
-        switch(str)
+        switch (str)
         {
             case "분류":
                 {
@@ -57,7 +58,7 @@ public class ToolNodeElement : VisualElement
                 break;
         }
 
-        switch(str)
+        switch (str)
         {
             case "생성":
                 {
@@ -79,25 +80,28 @@ public class ToolNodeElement : VisualElement
 
     void CreateDropdown()
     {
-        var dropdown = new DropdownField(title);
-        dropdown.formatSelectedValueCallback = (str) =>
+        currentDropdown = new DropdownField(title);
+        currentDropdown.formatSelectedValueCallback = (str) =>
         {
             currentSelect = str;
             dropdownCallBack(str, dropdownType);
             return str;
         };
 
-        Add(dropdown);
-        dropdown.choices.Clear();
+        Add(currentDropdown);
+        currentDropdown.choices.Clear();
         foreach (var v in settingInfo.setting)
         {
-            dropdown.choices.Add(v);
+            currentDropdown.choices.Add(v);
         }
     }
 
     public void SelectDropDown(string value)
     {
-        title = value;
-        Play(value);
+        dropdownCallBack(value, dropdownType);
+        if(currentDropdown != null)
+        {
+            currentDropdown.value = value;
+        }
     }
 }

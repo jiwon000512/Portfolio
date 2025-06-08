@@ -41,18 +41,21 @@ public class ToolData
 
     void ConvertToolInfo(System.Type type, string stringToolInfo)
     {
-        //if (ToolSaveData.ConvertMethod == null)
-        //{
-        //    ToolSaveData.ConvertMethod = typeof(Newtonsoft.Json.JsonConvert).GetMethods(BindingFlags.Public | BindingFlags.Static).FirstOrDefault(m =>
-        //    m.Name == nameof(Newtonsoft.Json.JsonConvert.DeserializeObject) &&
-        //    m.IsGenericMethodDefinition &&
-        //    m.GetParameters().Length == 1 &&
-        //    m.GetParameters()[0].ParameterType == typeof(string)
-        //    );
-        //}
+        if (ToolSaveData.ConvertMethod == null)
+        {
+            ToolSaveData.ConvertMethod = typeof(Newtonsoft.Json.JsonConvert).GetMethods(BindingFlags.Public | BindingFlags.Static).FirstOrDefault(m =>
+            m.Name == nameof(Newtonsoft.Json.JsonConvert.DeserializeObject) &&
+            m.IsGenericMethodDefinition &&
+            m.GetParameters().Length == 1 &&
+            m.GetParameters()[0].ParameterType == typeof(string)
+            );
+        }
 
-        var result = Newtonsoft.Json.JsonConvert.DeserializeObject(stringToolInfo);
-        toolInfo = result as ToolInfo;
+        if(type != null)
+        {
+            var genericMethod = ToolSaveData.ConvertMethod.MakeGenericMethod(type);
+            toolInfo = (ToolInfo)genericMethod.Invoke(stringToolInfo, null);
+        }
     }
 
     public void AddData(NodeInfo node)
