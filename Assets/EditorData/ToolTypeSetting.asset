@@ -21,4 +21,13 @@ MonoBehaviour:
   infos:
   - title: "\uC0DD\uC131"
     setting:
-    - "\uC624\uBE0C\uC81D\uD2B8"
+    - "\uC720\uB2DB\uC0DD\uC131"
+    - "\uC624\uBE0C\uC81D\uD2B8\uC0DD\uC131"
+  - title: "\uAD00\uB9AC"
+    setting:
+    - "\uC720\uB2DB\uAD00\uB9AC"
+    - "\uC624\uBE0C\uC81D\uD2B8\uAD00\uB9AC"
+  - title: "\uC9C4\uD589"
+    setting:
+    - "\uC2DC\uAC04"
+    - "\uB51C\uB808\uC774"

@@ -64,12 +64,22 @@ public class ToolNodeElement : VisualElement
                     CreateDropdown();
                 }
                 break;
+            case "유닛생성":
+                {
+                    command = new ToolEditorCommand_CreateUnit();
+                }
+                break;
+            case "오브젝트생성":
+                {
+                    command = new ToolEditorCommand_CreateObjecct();
+                }
+                break;
         }
     }
 
     void CreateDropdown()
     {
-        var dropdown = new DropdownField();
+        var dropdown = new DropdownField(title);
         dropdown.formatSelectedValueCallback = (str) =>
         {
             currentSelect = str;
@@ -77,7 +87,6 @@ public class ToolNodeElement : VisualElement
             return str;
         };
 
-        dropdown.label = title;
         Add(dropdown);
         dropdown.choices.Clear();
         foreach (var v in settingInfo.setting)
@@ -88,6 +97,7 @@ public class ToolNodeElement : VisualElement
 
     public void SelectDropDown(string value)
     {
-
+        title = value;
+        Play(value);
     }
 }

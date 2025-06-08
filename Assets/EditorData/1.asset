@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - id: 0
-    toolInfo: 
-    toolInfoType: ToolSaveData+ToolInfo
+    toolInfo: '{"id":0,"toolInfo":{"id":0,"toolType":"ToolSaveData+ToolInfo, Assembly-CSharp-Editor,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"},"outNodes":[],"inNodes":[]}'
     outNodes: 01000000
     inNodes: 
     viewPosition: {x: 100, y: 100}
   - id: 1
-    toolInfo: 
-    toolInfoType: ToolSaveData+ToolInfo
+    toolInfo: '{"id":1,"toolInfo":{"path":null,"position":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"angle":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"scale":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"id":1,"toolType":"ToolSaveData+CreateObject,
+      Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"},"outNodes":[],"inNodes":[]}'
     outNodes: 
     inNodes: 00000000
-    viewPosition: {x: 311.33334, y: 100}
+    viewPosition: {x: 300, y: 100}
   nodeLinks:
   - portName: Next
     targetId: 1

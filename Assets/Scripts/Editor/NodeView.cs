@@ -127,7 +127,7 @@ public class NodeView : GraphView
 
     public ToolNode LoadNode(ToolData data,ToolSaveData.NodeInfo nodeInfo)
     {
-        var node = CreateNode("test");
+        var node = CreateNode(data.id.ToString());
         node.Load(data, nodeInfo);
         return node;
     }

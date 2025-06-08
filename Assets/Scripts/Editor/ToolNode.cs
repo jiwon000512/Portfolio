@@ -40,9 +40,10 @@ public class ToolNode : Node
 
     void SetGroupName(Dictionary<string, string> datas)
     {
+        var dropdownList = dropdownDatas.Values.ToList();
         foreach (var v in datas)
         {
-            var data = dropdownDatas.Values.ToList().Find(x => x.title == v.Key);
+            var data = dropdownList.Find(x => x.title == v.Key);
 
             if (data != null)
             {

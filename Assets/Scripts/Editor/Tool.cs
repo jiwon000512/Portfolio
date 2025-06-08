@@ -68,7 +68,6 @@ public partial class Tool : EditorWindow
         {
             ToolData toolData = new ToolData(v.id);
             toolData.AddData(v);
-
             toolDatas.Add(toolData);
         }
 
@@ -148,13 +147,13 @@ public partial class Tool : EditorWindow
 
             NodeInfo info = new NodeInfo()
             {
-                toolInfoType = node.data.toolInfo.toolType.ToString(),
+                toolInfoType = node.data.toolInfo.toolType,
                 viewPosition = node.GetPosition().position,
                 settingName = node.GetGroupName(),
                 id = node.data.id,
             };
 
-            //info.toolInfo = Newtonsoft.Json.JsonConvert.SerializeObject(node.data.id);
+            info.toolInfo = Newtonsoft.Json.JsonConvert.SerializeObject(node.data);
             data.nodes.Add(info);
             dic.Add(info.id, info);
         }
