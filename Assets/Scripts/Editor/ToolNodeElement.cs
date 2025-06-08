@@ -98,10 +98,20 @@ public class ToolNodeElement : VisualElement
 
     public void SelectDropDown(string value)
     {
-        dropdownCallBack(value, dropdownType);
-        if(currentDropdown != null)
+        foreach(var v in Children())
         {
-            currentDropdown.value = value;
+            if(v is DropdownField)
+            {
+                var drop =  v as DropdownField;
+                for (int i = 0; i < drop.choices.Count; i++)
+                {
+                    if (drop.choices[i] == value)
+                    {
+                        drop.index = i;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

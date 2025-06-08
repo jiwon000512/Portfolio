@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - id: 0
-    toolInfo: '{"id":0,"toolInfo":{"id":0,"toolType":"ToolSaveData+ToolInfo, Assembly-CSharp-Editor,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"},"outNodes":[],"inNodes":[]}'
+    toolInfo: '{"id":0,"toolType":"ToolSaveData+ToolInfo, Assembly-CSharp-Editor,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}'
     outNodes: 01000000
     inNodes: 
     viewPosition: {x: 100, y: 100}
   - id: 1
-    toolInfo: '{"id":1,"toolInfo":{"path":"aaa","position":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"angle":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"scale":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"id":1,"toolType":"ToolSaveData+CreateObject,
-      Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"},"outNodes":[],"inNodes":[]}'
+    toolInfo: '{"path":"aa","position":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"angle":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"scale":{"x":0,"y":0,"z":0,"magnitude":0.0,"sqrMagnitude":0},"id":1,"toolType":"ToolSaveData+CreateObject,
+      Assembly-CSharp-Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"}'
     outNodes: 
     inNodes: 00000000
-    viewPosition: {x: 370, y: 100}
+    viewPosition: {x: 271.2, y: 100}
   nodeLinks:
   - portName: Next
     targetId: 1

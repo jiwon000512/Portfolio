@@ -157,4 +157,14 @@ public class NodeView : GraphView
 
         node.Create(pos, max + 1);
     }
+
+    public void DeleteAll()
+    {
+        var edgeList = edges.ToList();
+        foreach(var node in toolNodes)
+        {
+            edgeList.Where(x => x.input.node == node).ToList().ForEach(edge => RemoveElement(edge));
+            RemoveElement(node);
+        }
+    }
 }

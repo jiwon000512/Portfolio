@@ -55,6 +55,8 @@ public partial class Tool : EditorWindow
 
     public void Load(string fileName)
     {
+        DeleteAll();
+
         var data = AssetDatabase.LoadAssetAtPath<ToolSaveData>(SaveFolderPath + fileName + ".asset");
 
         if (data == null || data.nodes.Count == 0)
@@ -102,7 +104,6 @@ public partial class Tool : EditorWindow
 
                 if (targetNode == null || targetNode.data?.id == 0)
                 {
-                    Debug.LogError("연결되는 노드 없음");
                     continue;
                 }
 
@@ -110,7 +111,6 @@ public partial class Tool : EditorWindow
                     continue;
 
                 LinkNodesTogether(nodes[i].outputContainer[j].Q<Port>(), (Port)targetNode.inputContainer[0], nodeView);
-
 
                 targetNode.SetPosition(new Rect(
                     data.nodes.First(x => x.id == id).viewPosition,
@@ -134,7 +134,6 @@ public partial class Tool : EditorWindow
 
         data.nodes.Clear();
         Dictionary<int, NodeInfo> dic = new Dictionary<int, NodeInfo>();
-
         List<ToolNode> nodes = nodeView.nodes.ToList().Cast<ToolNode>().ToList();
 
         foreach (var node in nodes)
@@ -153,7 +152,7 @@ public partial class Tool : EditorWindow
                 id = node.data.id,
             };
 
-            info.toolInfo = Newtonsoft.Json.JsonConvert.SerializeObject(node.data);
+            info.toolInfo = Newtonsoft.Json.JsonConvert.SerializeObject(node.data.toolInfo);
             data.nodes.Add(info);
             dic.Add(info.id, info);
         }
@@ -183,6 +182,12 @@ public partial class Tool : EditorWindow
         AssetDatabase.SaveAssets();
         EditorUtility.FocusProjectWindow();
         AssetDatabase.Refresh();
+    }
+
+    void DeleteAll()
+    {
+        if (nodeView != null)
+            nodeView.DeleteAll();
     }
 
     public void Delete()
